@@ -18,14 +18,12 @@ export class MeterTelemetryService {
     async createMeterTelemetry(dto: CreateMeterTelemetryDto): Promise<MeterTelemetry> {
         logger.info(`meter-telemetry.service.ts >> createMeterTelemetry() >> Ingesting for: ${dto.meterId}`);
 
-        // 1. Cold Store: Append-only History
         const telemetry = this.meterTelemetryRepo.create(dto);
         const saved = await this.meterTelemetryRepo.save(telemetry);
 
-        // 2. Hot Store: Upsert Current Status
         await this.meterStatusRepo.save({
             meterId: dto.meterId,
-            kwhConsumedAc: dto.energyConsumed, // Mapping energyConsumed to kwhConsumedAc
+            kwhConsumedAc: dto.energyConsumed,
             voltage: dto.voltage,
             current: dto.current,
             power: dto.power,

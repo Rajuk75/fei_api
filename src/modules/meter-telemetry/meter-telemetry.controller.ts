@@ -14,7 +14,10 @@ export class MeterTelemetryController {
         try {
             logger.info(`meter-telemetry.controller.ts >> ingestMeterTelemetry() >> Received meter telemetry for ${dto.meterId}`);
             const telemetry = await this.meterService.createMeterTelemetry(dto);
-            return setCreateSuccess({ message: 'Meter telemetry ingested successfully', data: telemetry });
+            return setCreateSuccess({
+                message: 'Meter telemetry ingested successfully',
+                data: telemetry
+            });
         } catch (error) {
             logger.error(`meter-telemetry.controller.ts >> ingestMeterTelemetry() >> Error ingesting meter telemetry`, { error: error.message, meterId: dto.meterId });
             if (error.name === 'ValidationError') {
@@ -30,7 +33,10 @@ export class MeterTelemetryController {
             logger.info(`meter-telemetry.controller.ts >> getLatestMeterTelemetry() >> Fetching latest telemetry for meter ${meterId}`);
             const telemetry = await this.meterService.getLatestByMeter(meterId);
             if (!telemetry) return setNotFound({ message: 'No telemetry data found for this meter' });
-            return setSuccess({ message: 'Latest meter telemetry retrieved successfully', data: telemetry });
+            return setSuccess({
+                message: 'Latest meter telemetry retrieved successfully',
+                data: telemetry
+            });
         } catch (error) {
             logger.error(`meter-telemetry.controller.ts >> getLatestMeterTelemetry() >> Error fetching latest meter telemetry`, { error: error.message, meterId });
             return setServerError({ message: 'Failed to retrieve latest meter telemetry', error: error.message });
@@ -45,7 +51,10 @@ export class MeterTelemetryController {
             const history = await this.meterService.getHistoryByMeter(meterId, safeLimit);
             return setSuccess({
                 message: 'Meter telemetry history retrieved successfully',
-                data: { count: history.length, records: history }
+                data: {
+                    count: history.length,
+                    records: history
+                }
             });
         } catch (error) {
             logger.error(`meter-telemetry.controller.ts >> getMeterTelemetryHistory() >> Error fetching meter history`, { error: error.message, meterId });
