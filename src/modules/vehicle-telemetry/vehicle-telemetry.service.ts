@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { VehicleTelemetry } from './entities/vehicle-telemetry.entity';
+import { VehicleStatus } from './entities/vehicle-status.entity';
 import { CreateVehicleTelemetryDto } from './dto/create-vehicle-telemetry.dto';
 import { logger } from '../../utils/logger';
 
@@ -10,13 +11,30 @@ export class VehicleTelemetryService {
     constructor(
         @InjectRepository(VehicleTelemetry)
         private readonly vehicleTelemetryRepo: Repository<VehicleTelemetry>,
+        @InjectRepository(VehicleStatus)
+        private readonly vehicleStatusRepo: Repository<VehicleStatus>,
     ) { }
 
     async createVehicleTelemetry(dto: CreateVehicleTelemetryDto): Promise<VehicleTelemetry> {
-        logger.info(`vehicle-telemetry.service.ts >> createVehicleTelemetry() >> Creating telemetry record for vehicle: ${dto.vehicleId}`);
+        logger.info(`vehicle-telemetry.service.ts >> createVehicleTelemetry() >> Ingesting for: ${dto.vehicleId}`);
+
+        // 1. Cold Store: Append-only History
         const telemetry = this.vehicleTelemetryRepo.create(dto);
         const saved = await this.vehicleTelemetryRepo.save(telemetry);
-        logger.info(`vehicle-telemetry.service.ts >> createVehicleTelemetry() >> Telemetry created with ID: ${saved.id}`);
+
+        // 2. Hot Store: Upsert Current Status
+        await this.vehicleStatusRepo.save({
+            vehicleId: dto.vehicleId,
+            soc: dto.soc,
+            kwhDeliveredDc: dto.kwhDeliveredDc || 0, // Assuming field exists in DTO or default
+            batteryTemp: dto.temperature, // Mapping temperature to batteryTemp
+            voltage: dto.voltage,
+            current: dto.current,
+            location: JSON.stringify(dto.location),
+            lastUpdated: new Date()
+        });
+
+        logger.info(`vehicle-telemetry.service.ts >> createVehicleTelemetry() >> Cold & Hot store updated for: ${saved.id}`);
         return saved;
     }
 
