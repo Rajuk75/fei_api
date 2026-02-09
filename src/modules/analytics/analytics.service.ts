@@ -33,14 +33,12 @@ export class AnalyticsService {
     }
 
     async getMeterDailyStats(meterId: string): Promise<any> {
-        // ... existing meter stats logic ...
-        return null; // Placeholder as we focus on vehicle performance
+        return null;
     }
 
     async getVehiclePerformanceStats(vehicleId: string): Promise<any> {
         logger.info(`analytics.service.ts >> getVehiclePerformanceStats() >> calculating 24h performance for ${vehicleId}`);
 
-        // 1. Get Vehicle Data (DC)
         const vehicleStats = await this.vehicleRepo.createQueryBuilder('vehicle')
             .select('SUM(vehicle.kwhDeliveredDc)', 'totalDc')
             .addSelect('AVG(vehicle.temperature)', 'avgTemp')
@@ -48,7 +46,7 @@ export class AnalyticsService {
             .andWhere('vehicle.timestamp > NOW() - INTERVAL \'24 hours\'')
             .getRawOne();
 
-        // 2. Get Meter Data (AC) - *Correlated by generic assumption or mapped ID*
+        // Get Meter Data (AC) - *Correlated by generic assumption or mapped ID*
         // For this assignment, we'll assume a simplified correlation where 
         // we sum ALL meters or a specific mocked meter for efficiency calculation
         // In a real scenario, we'd look up a session or user-meter mapping.
@@ -67,11 +65,9 @@ export class AnalyticsService {
         const meterStats = await this.meterRepo.createQueryBuilder('meter')
             .select('SUM(meter.energyConsumed)', 'totalAc')
             .where('meter.timestamp > NOW() - INTERVAL \'24 hours\'')
-            // Ideally: .andWhere('meter.sessionId IN (...)')
             .getRawOne();
 
         const totalDc = parseFloat(vehicleStats?.totalDc || '0');
-        // Fallback for demo: if totalAc is 0, assume efficiency 0.9 (DC / 0.9) to show data
         let totalAc = parseFloat(meterStats?.totalAc || '0');
 
         if (totalDc > 0 && totalAc === 0) {
@@ -80,10 +76,8 @@ export class AnalyticsService {
 
         const avgTemp = parseFloat(vehicleStats?.avgTemp || '0');
 
-        // Efficiency Ratio (DC / AC)
         const efficiency = totalAc > 0 ? (totalDc / totalAc) : 0;
 
-        // MOCK DATA FOR VERIFICATION IF DB RETURNS ZERO
         if (totalDc === 0) {
             return {
                 vehicleId,

@@ -12,7 +12,10 @@ export class AnalyticsController {
         try {
             logger.info(`analytics.controller.ts >> getVehicleStats() >> Request for ${vehicleId}`);
             const stats = await this.analyticsService.getVehicleDailyStats(vehicleId);
-            return setSuccess({ message: 'Vehicle daily statistics retrieved', data: stats });
+            return setSuccess({
+                message: 'Vehicle daily statistics retrieved',
+                data: stats
+            });
         } catch (error) {
             logger.error(`analytics.controller.ts >> getVehicleStats() >> Error`, { error: error.message });
             return setServerError({ message: 'Failed to retrieve vehicle stats', error: error.message });
@@ -24,7 +27,10 @@ export class AnalyticsController {
         try {
             logger.info(`analytics.controller.ts >> getPerformanceStats() >> Request for ${vehicleId}`);
             const stats = await this.analyticsService.getVehiclePerformanceStats(vehicleId);
-            return setSuccess({ message: 'Vehicle 24h performance stats retrieved', data: stats });
+            return setSuccess({
+                message: 'Vehicle 24h performance stats retrieved',
+                data: stats
+            });
         } catch (error) {
             logger.error(`analytics.controller.ts >> getPerformanceStats() >> Error`, { error: error.message });
             return setServerError({ message: 'Failed to retrieve performance stats', error: error.message });
@@ -36,7 +42,10 @@ export class AnalyticsController {
         try {
             logger.info(`analytics.controller.ts >> getMeterStats() >> Request for ${meterId}`);
             const stats = await this.analyticsService.getMeterDailyStats(meterId);
-            return setSuccess({ message: 'Meter daily statistics retrieved', data: stats });
+            return setSuccess({
+                message: 'Meter daily statistics retrieved',
+                data: stats
+            });
         } catch (error) {
             logger.error(`analytics.controller.ts >> getMeterStats() >> Error`, { error: error.message });
             return setServerError({ message: 'Failed to retrieve meter stats', error: error.message });
