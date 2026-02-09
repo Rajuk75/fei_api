@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MeterTelemetry } from './entities/meter-telemetry.entity';
+import { MeterStatus } from './entities/meter-status.entity';
 import { CreateMeterTelemetryDto } from './dto/create-meter-telemetry.dto';
 import { logger } from '../../utils/logger';
 
@@ -10,13 +11,29 @@ export class MeterTelemetryService {
     constructor(
         @InjectRepository(MeterTelemetry)
         private readonly meterTelemetryRepo: Repository<MeterTelemetry>,
+        @InjectRepository(MeterStatus)
+        private readonly meterStatusRepo: Repository<MeterStatus>,
     ) { }
 
     async createMeterTelemetry(dto: CreateMeterTelemetryDto): Promise<MeterTelemetry> {
-        logger.info(`meter-telemetry.service.ts >> createMeterTelemetry() >> Creating telemetry record for meter: ${dto.meterId}`);
+        logger.info(`meter-telemetry.service.ts >> createMeterTelemetry() >> Ingesting for: ${dto.meterId}`);
+
+        // 1. Cold Store: Append-only History
         const telemetry = this.meterTelemetryRepo.create(dto);
         const saved = await this.meterTelemetryRepo.save(telemetry);
-        logger.info(`meter-telemetry.service.ts >> createMeterTelemetry() >> Telemetry created with ID: ${saved.id}`);
+
+        // 2. Hot Store: Upsert Current Status
+        await this.meterStatusRepo.save({
+            meterId: dto.meterId,
+            kwhConsumedAc: dto.energyConsumed, // Mapping energyConsumed to kwhConsumedAc
+            voltage: dto.voltage,
+            current: dto.current,
+            power: dto.power,
+            status: dto.status,
+            lastUpdated: new Date()
+        });
+
+        logger.info(`meter-telemetry.service.ts >> createMeterTelemetry() >> Cold & Hot store updated for: ${saved.id}`);
         return saved;
     }
 
