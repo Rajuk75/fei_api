@@ -3,11 +3,11 @@ import { AnalyticsService } from './analytics.service';
 import { logger } from '../../utils/logger';
 import { setSuccess, setServerError } from '../../utils/response.util';
 
-@Controller('v1/analytics')
+@Controller('v1')
 export class AnalyticsController {
     constructor(private readonly analyticsService: AnalyticsService) { }
 
-    @Get('vehicle/:vehicleId/daily')
+    @Get('analytics/vehicle/:vehicleId/daily')
     async getVehicleStats(@Param('vehicleId') vehicleId: string) {
         try {
             logger.info(`analytics.controller.ts >> getVehicleStats() >> Request for ${vehicleId}`);
@@ -19,7 +19,7 @@ export class AnalyticsController {
         }
     }
 
-    @Get('meter/:meterId/daily')
+    @Get('analytics/meter/:meterId/daily')
     async getMeterStats(@Param('meterId') meterId: string) {
         try {
             logger.info(`analytics.controller.ts >> getMeterStats() >> Request for ${meterId}`);

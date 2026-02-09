@@ -4,11 +4,11 @@ import { CreateMeterTelemetryDto } from './dto/create-meter-telemetry.dto';
 import { logger } from '../../utils/logger';
 import { setSuccess, setCreateSuccess, setNotFound, setBadRequest, setServerError } from '../../utils/response.util';
 
-@Controller('v1/telemetry/meter')
+@Controller('v1')
 export class MeterTelemetryController {
     constructor(private readonly meterService: MeterTelemetryService) { }
 
-    @Post()
+    @Post('telemetry/meter')
     @HttpCode(HttpStatus.CREATED)
     async ingestMeterTelemetry(@Body() dto: CreateMeterTelemetryDto) {
         try {
@@ -24,7 +24,7 @@ export class MeterTelemetryController {
         }
     }
 
-    @Get(':meterId/latest')
+    @Get('telemetry/meter/:meterId/latest')
     async getLatestMeterTelemetry(@Param('meterId') meterId: string) {
         try {
             logger.info(`meter-telemetry.controller.ts >> getLatestMeterTelemetry() >> Fetching latest telemetry for meter ${meterId}`);
@@ -37,7 +37,7 @@ export class MeterTelemetryController {
         }
     }
 
-    @Get(':meterId/history')
+    @Get('telemetry/meter/:meterId/history')
     async getMeterTelemetryHistory(@Param('meterId') meterId: string, @Query('limit') limit?: number) {
         try {
             const safeLimit = Math.min(Math.max(1, limit || 100), 1000);
