@@ -11,7 +11,7 @@ A high-performance system for ingesting and analyzing EV fleet telemetry.
 
 2.  **Go to Directory**
     ```bash
-    cd fie_api
+    cd fei_api
     ```
 
 3.  **Run with Docker**
