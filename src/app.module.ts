@@ -8,6 +8,7 @@ import { logger } from './utils/logger';
 import { DataSource } from 'typeorm';
 import { VehicleTelemetryModule } from './modules/vehicle-telemetry/vehicle-telemetry.module';
 import { MeterTelemetryModule } from './modules/meter-telemetry/meter-telemetry.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MeterTelemetryModule } from './modules/meter-telemetry/meter-telemetry.
     // Feature modules
     VehicleTelemetryModule,
     MeterTelemetryModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
