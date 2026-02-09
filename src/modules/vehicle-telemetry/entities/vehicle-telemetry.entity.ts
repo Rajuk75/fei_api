@@ -1,52 +1,38 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, Index } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 
-/**
- * Vehicle Telemetry Entity
- * Stores real-time telemetry data from electric vehicles
- * Table: vehicle_telemetry
- */
 @Entity('vehicle_telemetry')
-@Index(['vehicleId', 'timestamp']) // Composite index for fast queries
-@Index(['timestamp']) // Index for time-based queries
+@Index(['vehicleId', 'timestamp']) // Optimize analytical queries
 export class VehicleTelemetry {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ name: 'vehicle_id', type: 'varchar', length: 50 })
-    @Index() // Index for vehicle-specific queries
+    @Column({ name: 'vehicle_id', nullable: true })
     vehicleId: string;
 
-    // Battery Information
-    @Column({ type: 'decimal', precision: 5, scale: 2, comment: 'State of Charge (0-100%)' })
+    @Column('float', { nullable: true })
     soc: number;
 
-    @Column({ type: 'decimal', precision: 6, scale: 2, nullable: true, comment: 'Voltage in Volts' })
+    @Column('float', { nullable: true, default: 0 })
+    kwhDeliveredDc: number;
+
+    @Column('float', { nullable: true })
     voltage: number;
 
-    @Column({ type: 'decimal', precision: 6, scale: 2, nullable: true, comment: 'Current in Amperes' })
-    current: number;
-
-    @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true, comment: 'Battery temperature in Celsius' })
+    @Column('float', { nullable: true })
     temperature: number;
 
-    // Vehicle Status
-    @Column({ type: 'integer', nullable: true, comment: 'Speed in km/h' })
+    @Column('float', { nullable: true })
     speed: number;
 
-    @Column({ type: 'integer', nullable: true, comment: 'Total distance in km' })
+    @Column('float', { nullable: true })
     odometer: number;
 
-    // Location Information
-    @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true, comment: 'Latitude' })
-    latitude: number;
+    @Column('jsonb', { nullable: true }) // Using JSONB for better querying if needed
+    location: {
+        latitude: number;
+        longitude: number;
+    };
 
-    @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true, comment: 'Longitude' })
-    longitude: number;
-
-    // Timestamps
-    @CreateDateColumn({ name: 'timestamp', type: 'timestamp', comment: 'Data collection timestamp' })
+    @Column({ type: 'timestamp' })
     timestamp: Date;
-
-    @CreateDateColumn({ name: 'created_at', type: 'timestamp', comment: 'Record creation timestamp' })
-    createdAt: Date;
 }
