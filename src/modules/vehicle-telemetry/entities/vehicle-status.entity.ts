@@ -21,7 +21,7 @@ export class VehicleStatus {
     current: number;
 
     @Column({ nullable: true })
-    location: string; // JSON string for lat/long
+    location: string;
 
     @UpdateDateColumn({ name: 'last_updated' })
     lastUpdated: Date;

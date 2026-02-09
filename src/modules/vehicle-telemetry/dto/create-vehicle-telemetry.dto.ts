@@ -49,7 +49,7 @@ export class CreateVehicleTelemetryDto {
     @IsNumber()
     @Min(-50)
     @Max(100)
-    temperature?: number; // -50°C to 100°C
+    temperature?: number;
 
     @IsOptional()
     @IsNumber()
