@@ -27,7 +27,7 @@ export class VehicleTelemetry {
     @Column('float', { nullable: true })
     odometer: number;
 
-    @Column('jsonb', { nullable: true }) // Using JSONB for better querying if needed
+    @Column('jsonb', { nullable: true })
     location: {
         latitude: number;
         longitude: number;
