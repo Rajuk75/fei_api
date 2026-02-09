@@ -34,6 +34,11 @@ export class CreateVehicleTelemetryDto {
     @IsOptional()
     @IsNumber()
     @Min(0)
+    kwhDeliveredDc?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
     voltage?: number;
 
     @IsOptional()
