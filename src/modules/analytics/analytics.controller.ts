@@ -19,6 +19,18 @@ export class AnalyticsController {
         }
     }
 
+    @Get('analytics/performance/:vehicleId')
+    async getPerformanceStats(@Param('vehicleId') vehicleId: string) {
+        try {
+            logger.info(`analytics.controller.ts >> getPerformanceStats() >> Request for ${vehicleId}`);
+            const stats = await this.analyticsService.getVehiclePerformanceStats(vehicleId);
+            return setSuccess({ message: 'Vehicle 24h performance stats retrieved', data: stats });
+        } catch (error) {
+            logger.error(`analytics.controller.ts >> getPerformanceStats() >> Error`, { error: error.message });
+            return setServerError({ message: 'Failed to retrieve performance stats', error: error.message });
+        }
+    }
+
     @Get('analytics/meter/:meterId/daily')
     async getMeterStats(@Param('meterId') meterId: string) {
         try {
