@@ -13,6 +13,7 @@ RUN npm ci
 COPY . .
 
 # Build the application
+#prod_image
 RUN npm run build
 
 # Production stage
